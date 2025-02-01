@@ -11,7 +11,7 @@ DATE := $(shell date +%Y%m%d)
 WORK_DIR="$(PWD)"
 
 # List of files to delete when merging master onto overleaf
-DELETE_FILES := Makefile make.bat exclude.txt .devcontainer README.md
+DELETE_FILES := Makefile make.bat exclude.txt .devcontainer README* .github
 
 # Default target to build the main PDF
 all: main.pdf

@@ -6,7 +6,7 @@ set ARCHIVE_NAME="main"
 set TITLE="core-pubs"
 set OVERLEAF_DIR="%USERPROFILE%\Dropbox\Apps\Overleaf\%TITLE%"
 REM List of files to delete if they exist when merging the master branch into the overleaf branch
-set FILES_TO_DELETE="Makefile make.bat exclude.txt .devcontainer README*"
+set FILES_TO_DELETE="Makefile make.bat exclude.txt .devcontainer README* .github"
 REM Set variables for the script
 
 :loop
