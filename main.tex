@@ -1,0 +1,159 @@
+\documentclass[a4paper]{article}
+
+\usepackage[margin=2cm]{geometry}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+\usepackage[unicode,
+            colorlinks=true,
+            breaklinks,
+            urlcolor=cyan, 
+            linkcolor=blue, 
+            citecolor=green,
+            pdftitle={List of some publications related to Combinatorial Reconfiguration}
+            ]{hyperref}
+
+\title{\textbf{List of some publications related to Combinatorial Reconfiguration}}
+\author{
+    \textbf{Contributor(s): }% 
+    	Duc~A.~Hoang\\
+    	% more contributor(s) go here
+}
+\date{January 30, 2025}
+
+\usepackage[backend=biber, safeinputenc, style=numeric, sorting=ynt, maxbibnames=20, labeldateparts=true, defernumbers=true]{biblatex}
+
+% Note at the end, see https://tex.stackexchange.com/a/139010
+\DeclareSourcemap{
+	\maps[datatype=bibtex]{
+		\map{
+			\step[fieldsource=note, final]
+			\step[fieldset=addendum, origfieldval, final]
+			\step[fieldset=note, null]
+		}
+	}
+}
+
+\addbibresource{core.bib}
+
+% Sort all citations from one year automatically under a heading with the year number
+% See https://tex.stackexchange.com/a/472714
+\usepackage{xparse}
+
+% from moewe’s answer at https://tex.stackexchange.com/a/434393/105447
+
+\ExplSyntaxOn
+\seq_new:N \g__blxbibbyyear_yearlist_seq
+
+\cs_new:Npn \__blxbibbyyear_seq_gput_right_once:Nn #1 #2
+{
+	\seq_if_in:NnF #1 {#2}
+	{ \seq_gput_right:Nn #1 {#2} }
+}
+
+\cs_generate_variant:Nn \__blxbibbyyear_seq_gput_right_once:Nn { NV, Nx }
+
+
+\prg_new_conditional:Nnn \blx_field_if_undef:n { p, T, F , TF }
+{
+	\use:c { iffieldundef } { #1 } { \prg_return_true: } { \prg_return_false: }
+}
+
+% unfortunately, \iffieldint is not expandable, so no p version for us, boo
+\prg_new_protected_conditional:Nnn \blx_field_if_int:n { T, F , TF }
+{
+	\iffieldint { #1 } { \prg_return_true: } { \prg_return_false: }
+}
+
+\AtDataInput
+{
+	\blx_field_if_undef:nF { labeldatesource }
+	{
+		\blx_field_if_undef:nTF { \thefield{labeldatesource}year }
+		{
+			\blx_field_if_undef:nF { \thefield{labeldatesource} }
+			{
+				\blx_field_if_int:nT { \thefield{labeldatesource} }
+				{
+					\__blxbibbyyear_seq_gput_right_once:Nx \g__blxbibbyyear_yearlist_seq
+					{ \thefield{\thefield{labeldatesource}} }
+				}
+			}
+		}
+		{
+			\__blxbibbyyear_seq_gput_right_once:Nx \g__blxbibbyyear_yearlist_seq
+			{ \thefield{\thefield{labeldatesource}year} }
+		}
+	}
+}
+
+\cs_new:Npn \blxbibbyyear_seq_sort_bydirection:NN #1 #2
+{
+	\seq_sort:Nn #2
+	{
+		\int_compare:nNnTF { ##1 } #1 { ##2 }
+		{ \sort_return_swapped: }
+		{ \sort_return_same: }
+	}
+}
+
+\cs_new:Nn \blxbibbyyear_seq_sort_descending:N
+{
+	\blxbibbyyear_seq_sort_bydirection:NN < #1
+}
+
+\cs_new_nopar:Npn \blxbibbyyear_print_yearbib:nn #1 #2
+{
+	\defbibcheck{thisyear}
+	{
+		\blx_field_if_int:nTF { labelyear }
+		{
+			\int_compare:nNnF { \thefield{labelyear} } = { #1 }
+			{ \skipentry }
+		}
+		{ \skipentry }
+	}
+	\printbibliography[heading=bibintoc, title=#1, check=thisyear, #2]
+}
+
+\DeclareDocumentCommand{\printbibbyyear}{O{}}
+{
+	\blxbibbyyear_seq_sort_descending:N \g__blxbibbyyear_yearlist_seq
+	\seq_map_inline:Nn \g__blxbibbyyear_yearlist_seq
+	{ \blxbibbyyear_print_yearbib:nn {##1} {#1} }
+}%
+\ExplSyntaxOff
+
+% Audrey’s approach to reverse numbering
+% at https://tex.stackexchange.com/a/22770/105447
+
+% Count total number of entries in each refsection
+\AtDataInput{%
+	\csnumgdef{entrycount:\therefsection}{%
+		\csuse{entrycount:\therefsection}+1}}
+
+% Print the labelnumber as the total number of entries in the
+% current refsection, minus the actual labelnumber, plus one
+\DeclareFieldFormat{labelnumber}{\mkbibdesc{#1}}
+\newrobustcmd*{\mkbibdesc}[1]{%
+	\number\numexpr\csuse{entrycount:\therefsection}+1-#1\relax}
+
+% Change title of TOC
+\renewcommand{\contentsname}{Publications categorized by year}
+
+\begin{document}
+	\nocite{*}
+	
+	\maketitle
+	
+	\begin{abstract}
+		In this document, we provide a non-exhaustive list of publications related to \href{https://en.wikipedia.org/wiki/Reconfiguration}{Combinatorial Reconfiguration}.
+	\end{abstract}
+	
+	\tableofcontents
+	
+	\clearpage
+	
+ 	\printbibbyyear
+\end{document}
