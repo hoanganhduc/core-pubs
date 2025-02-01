@@ -22,6 +22,7 @@ IF "%~1"=="push-to-github" GOTO push-to-github
 IF "%~1"=="push-to-github-overleaf" GOTO push-to-github-overleaf
 IF "%~1"=="merge-overleaf-to-master" GOTO merge-overleaf-to-master
 IF "%~1"=="merge-master-to-overleaf" GOTO merge-master-to-overleaf
+IF "%~1"=="merge-master-to-releases" GOTO merge-master-to-releases
 GOTO loop
 REM Check the first command-line argument and jump to the corresponding label
 
@@ -97,4 +98,9 @@ GOTO:EOF
 :merge-master-to-overleaf
 REM Merge the master branch into the overleaf branch and remove specific files
 git checkout overleaf && git merge --no-commit --no-ff --allow-unrelated-histories master && for %%f in (%FILES_TO_DELETE%) do (if exist %%f (git rm -rf %%f)) && latexmk -C && git commit -S -m "Merge master onto overleaf %date% %time%" && git push -u overleaf overleaf:master && git push -u origin overleaf && git checkout master
+GOTO:EOF
+
+:merge-master-to-releases
+REM Merge the master branch into the releases branch
+git checkout releases && git merge --no-commit --no-ff --allow-unrelated-histories master && git commit -S -m "Merge master onto releases %date% %time%" && git push -u origin releases && git checkout master
 GOTO:EOF

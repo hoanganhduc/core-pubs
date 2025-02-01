@@ -106,3 +106,11 @@ merge-master-to-overleaf:
 	git push -u overleaf overleaf:master
 	git push -u origin overleaf
 	git checkout master
+
+# Rule to merge the master branch into the releases branch
+merge-master-to-releases:
+	git checkout releases
+	git merge --no-commit --no-ff --allow-unrelated-histories master
+	git commit -S -m "Merge master onto releases $(shell date +'%Y-%m-%d  %H:%M:%S %Z')"
+	git push -u origin releases
+	git checkout master
