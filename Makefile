@@ -15,6 +15,7 @@ DELETE_FILES := Makefile make.bat exclude.txt .devcontainer README* .github
 
 # Default target to build the main PDF
 all: main.pdf
+	@cp -vp main.pdf $(TITLE).pdf  # Copy the main.pdf to the project title
 
 # Rule to build a PDF from a .tex file and refs.bib
 %.pdf: %.tex core.bib

@@ -1,8 +1,9 @@
 name: Build LaTeX document
 on: 
-  push:
-    branches:
-      - releases
+  # push:
+  #   branches:
+  #     - master
+  workflow_dispatch:
 permissions:
   contents: write
 jobs:
@@ -12,23 +13,24 @@ jobs:
       - name: Set up Git repository
         uses: actions/checkout@v4
         
-      - name: Compile core-pubs
-        uses: xu-cheng/latex-action@v3
+      - name: Generate core-pubs
+        uses: addnab/docker-run-action@v3
         with:
-          working_directory: ""
-          root_file: main.tex
-          docker_image: ghcr.io/xu-cheng/texlive-full:20231201
-          args: "-pdf -jobname=core-pubs -file-line-error -halt-on-error -interaction=nonstopmode"
-          post_compile: "make clean"
+          image: ghcr.io/hoanganhduc/texlive:latest
+          options: -u root -v ${{ github.workspace }}:/core
+          run: |
+            source /root/.zshrc
+            cd /core
+            make
           
-      - name: set env
-        run: echo "NOW=$(date +'%Y.%m.%d.%H%M')" >> $GITHUB_ENV
+      # - name: set env
+      #   run: echo "NOW=$(date +'%Y.%m.%d.%H%M')" >> $GITHUB_ENV
 
-      - name: Release
-        uses: softprops/action-gh-release@v2
-        with:
-          name: Release ${{ env.NOW }}
-          tag_name: ${{ env.NOW }}
-          files: |
-            core-pubs.pdf
-          fail_on_unmatched_files: true
+      # - name: Release
+      #   uses: softprops/action-gh-release@v2
+      #   with:
+      #     name: Release ${{ env.NOW }}
+      #     tag_name: ${{ env.NOW }}
+      #     files: |
+      #       core-pubs.pdf
+      #     fail_on_unmatched_files: true
