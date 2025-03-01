@@ -23,14 +23,14 @@ jobs:
             cd /core
             make
           
-      # - name: set env
-      #   run: echo "NOW=$(date +'%Y.%m.%d.%H%M')" >> $GITHUB_ENV
+      - name: set env
+        run: echo "NOW=$(date +'%Y.%m.%d.%H%M')" >> $GITHUB_ENV
 
-      # - name: Release
-      #   uses: softprops/action-gh-release@v2
-      #   with:
-      #     name: Release ${{ env.NOW }}
-      #     tag_name: ${{ env.NOW }}
-      #     files: |
-      #       core-pubs.pdf
-      #     fail_on_unmatched_files: true
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Release ${{ env.NOW }}
+          tag_name: ${{ env.NOW }}
+          files: |
+            core-pubs.pdf
+          fail_on_unmatched_files: true
