@@ -23,6 +23,7 @@ IF "%~1"=="push-to-github-overleaf" GOTO push-to-github-overleaf
 IF "%~1"=="merge-overleaf-to-master" GOTO merge-overleaf-to-master
 IF "%~1"=="merge-master-to-overleaf" GOTO merge-master-to-overleaf
 IF "%~1"=="merge-master-to-releases" GOTO merge-master-to-releases
+IF "%~1"=="run-workflow" GOTO run-workflow
 GOTO loop
 REM Check the first command-line argument and jump to the corresponding label
 
@@ -103,4 +104,9 @@ GOTO:EOF
 :merge-master-to-releases
 REM Merge the master branch into the releases branch
 git checkout releases && git merge --no-commit --no-ff --allow-unrelated-histories master && git commit -S -m "Merge master onto releases %date% %time%" && git push -u origin releases && git checkout master
+GOTO:EOF
+
+:run-workflow
+REM Run GitHub Actions workflow manually
+gh workflow run build.yml
 GOTO:EOF

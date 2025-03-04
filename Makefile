@@ -115,3 +115,6 @@ merge-master-to-releases:
 	git commit -S -m "Merge master onto releases $(shell date +'%Y-%m-%d  %H:%M:%S %Z')"
 	git push -u origin releases
 	git checkout master
+
+run-workflow: # requiures github cli
+	gh workflow run build.yml
