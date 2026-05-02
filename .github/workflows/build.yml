@@ -27,7 +27,7 @@ jobs:
         run: echo "NOW=$(date +'%Y.%m.%d.%H%M')" >> $GITHUB_ENV
 
       - name: Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v2.3.2
         with:
           name: Release ${{ env.NOW }}
           tag_name: ${{ env.NOW }}
