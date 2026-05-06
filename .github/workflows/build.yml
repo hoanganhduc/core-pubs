@@ -6,6 +6,8 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 jobs:
   build_latex:
     runs-on: ubuntu-latest
